@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,22 +16,18 @@ public class GameManager : MonoBehaviour
     public int score;
 
     
-    private float spawnRate = 0.5f;
+    public float spawnRate = 1.8f;
     private Vector3 randomPos;
 
-   
+    public TextMeshProUGUI pointsText;
+    public GameObject gameOverPanel;
+    public GameObject mainMenuPanel;
 
     void Start()
     {
-        score = 0;
-        StartCoroutine(SpawnRandomTarget());
+        mainMenuPanel.SetActive(true);
 
     }
-    void Update()
-    {
-        
-    }
-
     private Vector3 RandomSpawnPosition()
     {
         int jumpx = Random.Range(0, 4);
@@ -57,12 +55,35 @@ public class GameManager : MonoBehaviour
             targetPositions.Add(randomPos);
         }
     }
-    /*private void SpawnTarget()
-    {
-        int target = Random.Range(0, targetPrefabs.Length);
-        Vector3 position = RandomSpawnPosition();
 
-        Instantiate(targetPrefabs[target], position, targetPrefabs[target].transform.rotation);
-    }*/
+    public void  RestartGame()
+    {
+      SceneManager.LoadScene(0);
+    }
+    public void UpdateScore(int pointsToAdd)
+    {
+        score += pointsToAdd;
+        pointsText.text = $"Score: {score}";
+    }
+
+    public void GameOver()
+    {
+        isGameover = true;
+        gameOverPanel.SetActive(true);
+    }
+
+    public void StartGame(int dificulty)
+    {
+
+        mainMenuPanel.SetActive(false);
+        isGameover = false;
+        score = 0;
+        UpdateScore(0);
+
+        spawnRate /= dificulty;
+
+        StartCoroutine(SpawnRandomTarget());
+        gameOverPanel.SetActive(false);
+    }
 
 }
